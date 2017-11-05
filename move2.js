@@ -1,4 +1,3 @@
-# zhangjun..github.io
 function getStyle(obj, name)
 {
 	if(obj.currentStyle)
