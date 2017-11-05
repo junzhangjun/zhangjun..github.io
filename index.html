@@ -1,0 +1,248 @@
+# zhangjun..github.io
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+		<style>
+			ul,li,div,body{ list-style: none; margin: 0; padding: 0;}
+			ul{ width: 400px; height: 200px; overflow: hidden;}
+			li{color: white;text-align: center; line-height: 200px; width: 100px; height: 200px; float: left; border: 1px solid black; box-sizing: border-box; background-color: white;}
+			
+			.showBox{ height: 800px; overflow: hidden; position: relative; width: 400px;}
+			.showBox .time{ position: absolute; top: 0; width: 100%; text-align: center; z-index: 1; color: red; line-height: 50px; font-size: 30px; font-weight: bold;}
+			.ulBox{ position: absolute; bottom: -200px; float: left; height: 1200px; }
+			.gameOver{color: white; width: 100%; height: 100%; position: absolute; z-index: 2; display: none; background-color: rgba(255,0,0,0.8); left: -400px;}
+			.gameOver .message{text-align: center; position: absolute; top: 30%; width: 100%; }
+			.gameOver .message p{padding: 0 50px;}
+			.gameOver .message p:nth-child(1){ font-size: 28px;}
+			.gameOver .btn div{ float: left; width: 50%; text-align: center;font-size: 24px;}
+			.gameOver .btn{position: absolute; top: 600px; overflow: hidden; text-align: center; width: 300px; margin: 0 50px;}
+			.input{ position: absolute; z-index: 3; width: 200px; padding:20px; background-color: cadetblue; left: 50%; margin-left: -120px; top: 35%; box-shadow: 0px 0px 10px gray; display: none;}
+			.input p{ font-size: 12px; padding: 0 ; margin:10px 0; color: white;}
+			.input input{ border: none; width: 100%; line-height: 20px; margin-bottom: 10px;}
+			.input .submit{width: 100px; text-align: center; margin-left: 50px; border: 1px solid white; border-radius: 20px; line-height: 30px; color: white;}
+		</style>
+	</head>
+	
+	
+	
+	<body>
+		<div class="showBox">
+			<div class="time"></div>
+			<div class="ulBox">
+				<ul><li></li><li></li><li></li><li></li></ul>
+				<ul><li></li><li></li><li></li><li></li></ul>
+				<ul><li></li><li></li><li></li><li></li></ul>
+				<ul><li></li><li></li><li></li><li></li></ul>
+				<ul><li></li><li></li><li></li><li></li></ul>
+				<ul><li></li><li></li><li></li><li></li></ul>
+			</div>		
+			<div class="gameOver">
+				<div class="message">
+					<h1>游戏结束</h1>
+					<p></p>
+					<p></p>
+					<p></p>
+					
+				</div>
+				<div class="btn">
+					<div class="share">分享</div>
+					<div class="rePlay">重来</div>
+				</div>
+			</div>
+			<div class="input">
+				<p>您好，恭喜您获得游戏胜利优惠券，请输入手机号领取吧</p>
+				<input type="tel" />
+				<div class="submit">提交</div>
+			</div>
+		</div>
+
+	</body>
+	<!--<script src="jquery-3.2.1.js"></script>-->
+	<script src="move2.js"></script>
+	<script>
+		window.onload=function(){			
+					reset();
+					document.getElementsByClassName("rePlay")[0].onclick=reset;
+					
+		};
+		var num=0;
+		var timer=null;
+		var nowT=30.00;
+		function reset(){
+			//重置样式
+			num=0;
+			timer=null;
+			document.getElementsByClassName("gameOver")[0].style.display="none";
+			document.getElementsByClassName("gameOver")[0].style.left="-500px"
+			var lis=document.getElementsByTagName("li");
+			for(i=0;i<lis.length;i++){
+				lis[i].style.backgroundColor="white";
+			};	
+			document.getElementsByClassName("time")[0].innerHTML="30.00''";
+			//设置黑色块
+			var uls=document.getElementsByTagName("ul");
+			var fLis=document.getElementsByTagName("ul")[4].getElementsByTagName("li");
+			for(i=0;i<fLis.length;i++){
+				fLis[i].style.backgroundColor="chocolate"
+			}
+			for(i=0;i<uls.length;i++){
+				if(i==4){					
+					continue;
+				}
+				var lis=uls[i].getElementsByTagName("li");
+				for(a=0;a<lis.length;a++){
+					lis[a].index=0;
+				};
+				var m=getRandom();
+				lis[m].index=1;
+				lis[m].style.backgroundColor="#000000";	
+				if(i==3){
+					uls[i].getElementsByTagName("li")[m].innerHTML="start";
+					removeF();
+				}				
+			};	
+		};
+		
+		function getRandom(){
+			var i;
+			i=parseInt(4*Math.random());
+			return i;
+		};
+		
+		function setIndex(uls){
+			var lis=uls.getElementsByTagName("li");
+			for(a=0;a<lis.length;a++){
+				lis[a].index=0;
+			}
+			var m=getRandom();
+			lis[m].index=1;
+			lis[m].style.backgroundColor="#000000";
+			return m;
+		}
+		
+		function removeF(){
+			//移除事件
+			var lis=document.getElementsByTagName("li");
+			for(i=0;i<lis.length;i++){
+				lis[i].onclick=null;
+			}			
+			//设置事件
+			var lis3=document.getElementsByTagName("ul")[3].getElementsByTagName("li");
+			for(i=0;i<lis3.length;i++){
+				lis3[i].onclick=click;
+			}
+		};
+		
+		
+		function click(){
+			if(this.index==1){
+				num++;
+				if(this.innerHTML=="start"){
+					this.innerHTML="";
+					nowT=30.00;
+					timer=setInterval(function(){
+						nowT=nowT-0.01;
+						nowT=nowT.toFixed(2);
+						if(nowT==25){
+							clearInterval(timer);
+							nowT=30;
+							gameOver(num);
+							
+						}
+						document.getElementsByClassName("time")[0].innerHTML=nowT+"''";
+					},10);
+						
+				}
+				this.style.backgroundColor="gray";
+				
+				var div=document.getElementsByClassName("ulBox")[0];
+				var ul=document.getElementsByTagName("ul")[5];
+				startMove(div,{bottom:-400},function(){
+					newUl();					
+				});
+				
+			}else{		
+				this.innerHTML=""
+				clearInterval(timer);
+				nowT=30;
+				this.style.backgroundColor="red";
+				num=0;
+				gameOver(num);
+			};
+		};
+		
+		function newUl(){
+			//移除最底部ul
+			var div=document.getElementsByClassName("ulBox")[0];
+			var ul=document.getElementsByTagName("ul")[5];
+			var ul1=div.getElementsByTagName("ul")[0];
+			div.removeChild(ul);
+			div.style.bottom="-200px";
+			//添加newUl；			
+			var uls=document.getElementsByTagName("ul");			
+			var newUls=document.createElement("ul");
+			for(i=0;i<4;i++){
+				var newLi=document.createElement("li");
+				newUls.appendChild(newLi);
+			};
+			div.insertBefore(newUls,div.firstChild);
+			setIndex(newUls);
+			removeF();
+		};
+		
+		function removeF(){
+			//移除事件
+			var lis=document.getElementsByTagName("li");
+			for(i=0;i<lis.length;i++){
+				lis[i].onclick=null;
+			}			
+			//设置事件
+			var lis3=document.getElementsByTagName("ul")[3].getElementsByTagName("li");
+			for(i=0;i<lis3.length;i++){
+				lis3[i].onclick=click;
+			};
+		};
+		
+		function gameOver(num){
+			var message=document.getElementsByClassName("gameOver")[0].getElementsByClassName("message")[0];
+			if(num>=0 && num<5){
+				document.getElementsByClassName("gameOver")[0].style.display="block";
+				document.getElementsByClassName("gameOver")[0].style.backgroundColor='red';
+				if(num==0){
+					message.getElementsByTagName("p")[2].innerHTML="很遗憾，您闯关失败了，请再接再厉获取游戏奖励哦";
+				}else{
+					document.getElementsByClassName("gameOver")[0].style.display="block";
+					document.getElementsByClassName("gameOver")[0].style.backgroundColor='red';
+					message.getElementsByTagName("p")[0].innerHTML="您的得分";
+					message.getElementsByTagName("p")[0].style.fontSize="26px"
+					message.getElementsByTagName("p")[1].innerHTML=num;
+					message.getElementsByTagName("p")[1].style.fontSize="30px";
+					message.getElementsByTagName("p")[1].style.fontWeight="bold";
+					message.getElementsByTagName("p")[2].innerHTML="很遗憾，您的得分为达到领奖标准哦，请再接再厉";
+				}
+				
+			}else if(num>=5){
+				document.getElementsByClassName("gameOver")[0].style.display="block";
+				document.getElementsByClassName("gameOver")[0].style.backgroundColor='green';
+				message.getElementsByTagName("p")[0].innerHTML="您的得分";
+				message.getElementsByTagName("p")[0].style.fontSize="26px"
+				message.getElementsByTagName("p")[1].innerHTML=num;
+				message.getElementsByTagName("p")[1].style.fontSize="30px";
+				message.getElementsByTagName("p")[1].style.fontWeight="bold";
+				message.getElementsByTagName("p")[2].innerHTML="恭喜您，挑战成功，输入手机号领取优惠券吧！";
+				setInterval(function(){
+					document.getElementsByClassName("input")[0].style.display="block";
+				},2000)
+			}
+			
+			var t=setTimeout(function(){
+				var div=document.getElementsByClassName("gameOver")[0];
+				startMove(div,{left:0});
+				},600);
+		}
+		
+	</script>
+</html>
