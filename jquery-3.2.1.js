@@ -1,4 +1,3 @@
-# zhangjun..github.io
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
